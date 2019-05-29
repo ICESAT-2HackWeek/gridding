@@ -1,1 +1,5 @@
-## Gridding
+## Gridding Tutorial
+
+### Author
+
+Johan Nilsson
