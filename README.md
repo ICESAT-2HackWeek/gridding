@@ -9,4 +9,4 @@ This tutorial focuses on the usefulness of different interpolation techniques an
 - Understand the impact of different gridding and filtering strategies 
 - How to derive integrated volume change estimates of gridded datasets
 
-
+The algorithms used in this tutorial are downscaled versions of a python altimetry package, currently being devloped at JPL, providing a range of algorithms for common tasks in altimetry data processing. It will soon become avalibale on GitHub as the “captoolkit” for public usage.
