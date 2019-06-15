@@ -67,7 +67,7 @@ def medip(x, y, z, Xi, Yi, n, d):
     for i in range(len(xi)):
         
         # Find closest number of observations
-        (dxy, idx) = tree.query((xi[i], yi[i]), k=n)
+        (dxy, idx) = tree.query(list(zip(xi[i], yi[i])), k=n)
         
         # Check max distance
         if dxy.min() > d: continue
