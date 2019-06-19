@@ -149,7 +149,7 @@ def lscip(x, y, z, s, Xi, Yi, d, a, n):
     tree = cKDTree(np.c_[x, y])
     
     # Convert to meters
-    a *= 1e3
+    a *= 0.595 * 1e3
     d *= 1e3
     
     # Loop through observations
@@ -175,13 +175,13 @@ def lscip(x, y, z, s, Xi, Yi, d, a, n):
         c0 = np.nanvar(zc)
         
         # Covariance function for Dxy
-        Cxy = c0 * (1 + (dxy / a) - 0.5 * (dxy / a) ** 2) * np.exp(-dxy / a)
+        Cxy = c0 * (1 + (dxy / a)) * np.exp(-dxy / a)
         
         # Compute pair-wise distance
         dxx = cdist(np.c_[xc, yc], np.c_[xc, yc], "euclidean")
         
         # Covariance function Dxx
-        Cxx = c0 * (1 + (dxx / a) - 0.5 * (dxx / a) ** 2) * np.exp(-dxx / a)
+        Cxx = c0 * (1 + (dxx / a)) * np.exp(-dxx / a)
         
         # Measurement noise matrix
         N = np.eye(len(Cxx)) * sc * sc
@@ -250,34 +250,32 @@ def spatial_filter(x, y, z, dx, dy, sigma=5.0):
     return zo
 
 
-def interp2d(xd, yd, data, xq, yq, **kwargs):
+def interp2d(x, y, z, xi, yi, **kwargs):
     """Raster to point interpolation."""
     
-    xd = np.flipud(xd)
-    yd = np.flipud(yd)
-    data = np.flipud(data)
+    x = np.flipud(x)
+    y = np.flipud(y)
+    z = np.flipud(z)
     
-    xd = xd[0,:]
-    yd = yd[:,0]
+    x = x[0,:]
+    y = y[:,0]
     
-    nx, ny = xd.size, yd.size
-    (x_step, y_step) = (xd[1]-xd[0]), (yd[1]-yd[0])
+    nx, ny = x.size, y.size
     
-    assert (ny, nx) == data.shape
-    assert (xd[-1] > xd[0]) and (yd[-1] > yd[0])
+    x_s, y_s = x[1] - x[0], y[1] - y[0]
     
-    if np.size(xq) == 1 and np.size(yq) > 1:
-        xq = xq*ones(yq.size)
-    elif np.size(yq) == 1 and np.size(xq) > 1:
-        yq = yq*ones(xq.size)
+    if np.size(xi) == 1 and np.size(yi) > 1:
+        xi = xi * ones(yi.size)
+    elif np.size(yi) == 1 and np.size(xi) > 1:
+        yi = yi * ones(xi.size)
     
-    xp = (xq-xd[0])*(nx-1)/(xd[-1]-xd[0])
-    yp = (yq-yd[0])*(ny-1)/(yd[-1]-yd[0])
+    xp = (xi - x[0]) * (nx - 1) / (x[-1] - x[0])
+    yp = (yi - y[0]) * (ny - 1) / (y[-1] - y[0])
 
-    coord = np.vstack([yp,xp])
+    coord = np.vstack([yp, xp])
     
-    zq = map_coordinates(data, coord, **kwargs)
+    zi = map_coordinates(z, coord, **kwargs)
     
-    return zq
+    return zi
 
 
